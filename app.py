@@ -1,16 +1,17 @@
-
 from flask import Flask, render_template, request, redirect, session, flash
 import mysql.connector
+import os
 
 app = Flask(__name__)
 app.secret_key = "project2026"
 
+# ===== DATABASE CONNECTION USING ENV VARIABLES =====
 def getConnection():
     return mysql.connector.connect(
-        host="localhost",
-        user="root",
-        password="1234",   # CHANGE THIS TO YOUR MYSQL PASSWORD
-        database="evm"
+        host=os.getenv("DB_HOST"),
+        user=os.getenv("DB_USER"),
+        password=os.getenv("DB_PASS"),
+        database=os.getenv("DB_NAME")
     )
 
 # -------- WELCOME PAGE --------
@@ -34,8 +35,10 @@ def register():
 
         con = getConnection()
         cur = con.cursor()
-        cur.execute("INSERT INTO voter(name,email,password,age,address) VALUES(%s,%s,%s,%s,%s)",
-                    (name,email,password,age,address))
+        cur.execute(
+            "INSERT INTO voter(name,email,password,age,address) VALUES(%s,%s,%s,%s,%s)",
+            (name, email, password, age, address)
+        )
         con.commit()
 
         flash("Registration Successful - Please Login")
@@ -56,8 +59,10 @@ def voter_login():
 
     con = getConnection()
     cur = con.cursor()
-    cur.execute("SELECT voter_id,voted FROM voter WHERE email=%s AND password=%s",
-                (email,password))
+    cur.execute(
+        "SELECT voter_id,voted FROM voter WHERE email=%s AND password=%s",
+        (email, password)
+    )
     d = cur.fetchone()
 
     if d:
@@ -76,7 +81,10 @@ def admin_login():
 
     con = getConnection()
     cur = con.cursor()
-    cur.execute("SELECT * FROM admin WHERE username=%s AND password=%s",(u,p))
+    cur.execute(
+        "SELECT * FROM admin WHERE username=%s AND password=%s",
+        (u, p)
+    )
 
     if cur.fetchone():
         session['admin'] = True
@@ -109,8 +117,10 @@ def add_candidate():
 
     con = getConnection()
     cur = con.cursor()
-    cur.execute("INSERT INTO candidate(name,party,election_id) VALUES(%s,%s,1)",
-                (name,party))
+    cur.execute(
+        "INSERT INTO candidate(name,party,election_id) VALUES(%s,%s,1)",
+        (name, party)
+    )
     con.commit()
 
     flash("Candidate Added")
@@ -129,10 +139,12 @@ def cast():
     con = getConnection()
     cur = con.cursor()
 
-    cur.execute("INSERT INTO vote(voter_id,candidate_id,election_id) VALUES(%s,%s,1)",
-                (vid,cid))
+    cur.execute(
+        "INSERT INTO vote(voter_id,candidate_id,election_id) VALUES(%s,%s,1)",
+        (vid, cid)
+    )
 
-    cur.execute("UPDATE voter SET voted=1 WHERE voter_id=%s",(vid,))
+    cur.execute("UPDATE voter SET voted=1 WHERE voter_id=%s", (vid,))
     con.commit()
 
     session['voted'] = 1
