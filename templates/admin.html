@@ -1,0 +1,20 @@
+
+{% extends 'base.html' %}
+{% block body %}
+<div class="card">
+<h3>Admin Panel</h3>
+
+<form action="/add_candidate" method="post">
+<input name="name" placeholder="Candidate Name">
+<input name="party" placeholder="Party Name">
+<button>Add Candidate</button>
+</form>
+
+<h4>Candidate List</h4>
+{% for c in candidates %}
+<p>{{c[1]}} - {{c[2]}}</p>
+{% endfor %}
+
+<a class="btn" href="/result">View Result</a>
+</div>
+{% endblock %}

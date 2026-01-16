@@ -1,0 +1,24 @@
+
+{% extends 'base.html' %}
+{% block body %}
+<div class="card">
+<h3>Cast Vote</h3>
+
+{% if voted==1 %}
+<p>You already voted.</p>
+<a class="btn" href="/result">View Result</a>
+{% else %}
+
+<form action="/cast" method="post">
+{% for c in candidates %}
+<p>
+<input type="radio" name="cid" value="{{c[0]}}">
+{{c[1]}} - {{c[2]}}
+</p>
+{% endfor %}
+<button>Submit Vote</button>
+</form>
+
+{% endif %}
+</div>
+{% endblock %}

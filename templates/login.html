@@ -1,0 +1,19 @@
+
+{% extends 'base.html' %}
+{% block body %}
+<div class="card">
+<h3>{{ type|capitalize }} Login</h3>
+
+{% if type=='voter' %}
+<form action="/voter_login" method="post">
+{% else %}
+<form action="/admin_login" method="post">
+{% endif %}
+
+<input name="email" placeholder="Email / Username">
+<input name="password" type="password" placeholder="Password">
+<button>Login</button>
+</form>
+
+</div>
+{% endblock %}

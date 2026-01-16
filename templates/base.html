@@ -1,0 +1,37 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+<title>Online Voting</title>
+<link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+
+<header>
+  <div class="logo">Digital Voting System</div>
+  <nav>
+    <a href="/">Home</a>
+    <a href="/result">Result</a>
+    <a href="/register">Register</a>
+    <a href="/logout">Logout</a>
+  </nav>
+</header>
+
+<section class="container">
+{% with messages = get_flashed_messages() %}
+{% if messages %}
+<div class="msg">{{ messages[0] }}</div>
+{% endif %}
+{% endwith %}
+
+{% block body %}{% endblock %}
+</section>
+
+<footer>
+  Secure • Transparent • Easy Online Voting<br>
+  Academic Demonstration Project<br>
+  © Digital Voting Platform
+</footer>
+
+</body>
+</html>

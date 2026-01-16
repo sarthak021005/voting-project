@@ -1,0 +1,10 @@
+
+{% extends 'base.html' %}
+{% block body %}
+<div class="card">
+<h3>Election Result</h3>
+{% for x in r %}
+<p>{{x[0]}} : {{x[1]}} votes</p>
+{% endfor %}
+</div>
+{% endblock %}
