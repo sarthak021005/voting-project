@@ -5,7 +5,7 @@ import os
 app = Flask(__name__)
 app.secret_key = "project2026"
 
-# ===== DATABASE CONNECTION USING ENV VARIABLES =====
+# ===== DATABASE CONNECTION (RENDER ENV VARIABLES) =====
 def getConnection():
     return mysql.connector.connect(
         host=os.getenv("DB_HOST"),
@@ -54,6 +54,8 @@ def login(type):
 # -------- VOTER LOGIN --------
 @app.route('/voter_login', methods=['POST'])
 def voter_login():
+    session.pop('admin', None)        # IMPORTANT FIX
+
     email = request.form['email']
     password = request.form['password']
 
@@ -76,6 +78,8 @@ def voter_login():
 # -------- ADMIN LOGIN --------
 @app.route('/admin_login', methods=['POST'])
 def admin_login():
+    session.pop('voter', None)        # IMPORTANT FIX
+
     u = request.form['email']
     p = request.form['password']
 
@@ -93,7 +97,7 @@ def admin_login():
     flash("Invalid Admin Login")
     return redirect('/login/admin')
 
-# -------- DASHBOARD --------
+# -------- DASHBOARD (FIXED LOGIC) --------
 @app.route('/dashboard')
 def dashboard():
     con = getConnection()
@@ -101,11 +105,15 @@ def dashboard():
     cur.execute("SELECT * FROM candidate")
     c = cur.fetchall()
 
+    # CHECK VOTER FIRST
+    if 'voter' in session:
+        return render_template("vote.html",
+                               candidates=c,
+                               voted=session['voted'])
+
+    # THEN ADMIN
     if 'admin' in session:
         return render_template("admin.html", candidates=c)
-
-    if 'voter' in session:
-        return render_template("vote.html", candidates=c, voted=session['voted'])
 
     return redirect('/')
 
